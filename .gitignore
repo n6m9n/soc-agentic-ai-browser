@@ -1,0 +1,33 @@
+# virtual environments
+.venv/
+*/ai-browser-agent/
+venv/
+ENV/
+
+# python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# databases (generated at runtime)
+*.db
+*.sqlite
+
+# final-project runtime data + secrets
+final-project/data/
+credentials.json
+token.json
+
+# kept local, not published
+final-project/PROJECT.md
+
+# node / vite
+node_modules/
+dist/
+
+# secrets
+.env
+*.key
+
+# os
+.DS_Store

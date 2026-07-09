@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Browser Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              bg: "#F8FAFC",
+              ink: "#111827",
+              muted: "#6B7280",
+              line: "#E5E7EB",
+              primary: { DEFAULT: "#6366F1", 600: "#5b5ef0", 700: "#4f46e5" },
+              violet2: "#7C3AED",
+            },
+            fontFamily: {
+              sans: ["Inter", "ui-sans-serif", "system-ui", "-apple-system", "Segoe UI", "sans-serif"],
+            },
+            boxShadow: {
+              soft: "0 1px 2px rgba(16,24,40,.04), 0 6px 20px rgba(16,24,40,.06)",
+              lift: "0 12px 34px rgba(16,24,40,.12)",
+              glow: "0 8px 30px rgba(99,102,241,.35)",
+            },
+            borderRadius: { "2xl": "1rem", "3xl": "1.5rem" },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

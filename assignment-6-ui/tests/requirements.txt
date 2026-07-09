@@ -1,0 +1,5 @@
+# Deps to run the intent-parser tests (LLM is mocked, so no key needed).
+pytest
+pydantic
+google-genai      # imported by assignment-3's intent_parser
+python-dotenv     # imported by assignment-3's intent_parser

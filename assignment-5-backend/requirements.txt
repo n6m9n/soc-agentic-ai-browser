@@ -1,0 +1,16 @@
+# Core backend (needed to run the server + default simulated agent)
+fastapi
+uvicorn[standard]
+sqlmodel
+python-dotenv
+
+# Testing
+httpx
+pytest
+
+# Only needed when USE_REAL_AGENT=true (wires in the Week 4 LangChain agent).
+# Install these + `playwright install chromium` to run the real browser agent:
+#   langchain
+#   langchain-google-genai
+#   langgraph
+#   playwright

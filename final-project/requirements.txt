@@ -1,0 +1,30 @@
+# --- Web / API ---
+fastapi
+uvicorn[standard]
+sqlmodel
+python-dotenv
+python-multipart
+pydantic
+
+# --- Agent / LLM ---
+langchain
+langchain-google-genai
+langgraph
+langgraph-checkpoint-sqlite
+langchain-chroma
+chromadb
+
+# --- Content / browser (Phases 2-3) ---
+pypdf
+beautifulsoup4
+playwright
+
+# --- Google APIs (Phase 4-5) ---
+google-api-python-client
+google-auth
+google-auth-oauthlib
+google-auth-httplib2
+
+# --- Testing ---
+httpx
+pytest

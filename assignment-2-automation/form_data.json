@@ -1,0 +1,10 @@
+{
+  "firstName": "Anselm",
+  "lastName": "Tunwal",
+  "userEmail": "anselmsixanamantunwal12@gmail.com",
+  "gender": "Male",
+  "userNumber": "5550142000",
+  "dob": {"day": "15", "month": "June", "year": "2026"},
+  "subjects": "Computer Science",
+  "currentAddress": "742 Evergreen Terrace, Springfield, IL 62704"
+}
