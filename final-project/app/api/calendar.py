@@ -76,14 +76,17 @@ async def free_slots(body: FreeSlotsIn) -> dict:
 
 @router.post("/calendar/events")
 async def create_event(body: EventIn) -> dict:
-    from integrations.calendar_client import build_service, insert_event
+    from integrations.calendar_client import build_service, insert_event, get_primary_timezone
     from modules.calendar_intel import build_event
+    service = build_service(_creds())
+    tz = get_primary_timezone(service)
     event_body = build_event(
         body.title, datetime.fromisoformat(body.start), datetime.fromisoformat(body.end),
         freq=body.freq, count=body.count, attendees=body.attendees,
         location=body.location, reminders_minutes=body.reminders_minutes,
+        timezone=tz,
     )
-    created = insert_event(build_service(_creds()), event_body)
+    created = insert_event(service, event_body)
     return {"status": "created", "id": created.get("id"), "htmlLink": created.get("htmlLink")}
 
 

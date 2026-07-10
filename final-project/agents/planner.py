@@ -12,10 +12,11 @@ command into an ordered list of steps. Each step targets ONE module:
                  http(s) link, OR {} (empty) when the user says "this pdf/page/
                  document" — never put a non-URL phrase in "url".
   - email      : draft+send an email.    args: {"intent": "...", "target": "person-or-group"}
-  - calendar   : add a calendar event.   args: {"title": "...", "when": "..."}
+  - calendar   : add a calendar event.   args: {"title": "...", "start": "ISO datetime (YYYY-MM-DDTHH:MM:SS)", "end": "ISO datetime (optional)", "freq": "DAILY|WEEKLY (optional for recurring)", "count": int (optional)}
   - memory     : recall/store a fact.    args: {"query": "..."}
 
 Only use these modules. Keep the steps minimal and in execution order.
+Use the current system time provided to resolve relative dates/times like "tomorrow", "this evening", "this week", etc., into precise ISO-8601 datetimes.
 
 Examples:
 
@@ -25,6 +26,12 @@ Steps: summarize {"url":"https://example.com/post"} -> email {"intent":"share th
 Command: apply to this internship at https://jobs.x.com/123, add the deadline to my calendar, and email my mentor that I applied
 Steps: form {"url":"https://jobs.x.com/123"} -> calendar {"title":"Internship deadline"} -> email {"intent":"tell mentor I applied","target":"mentor"}
 
+Command: Add a study block every evening this week
+Steps: calendar {"title":"study block", "start":"2026-07-09T18:00:00", "freq":"DAILY", "count":7}
+
+Command: schedule a sync meeting tomorrow at 3 PM
+Steps: calendar {"title":"sync meeting", "start":"2026-07-10T15:00:00"}
+
 Command: summarize this pdf
 Steps: summarize {}
 
@@ -32,7 +39,7 @@ Command: what's my email address
 Steps: memory {"query":"email"}
 
 Now produce the Plan for the command below.
-Command: """
+"""
 
 
 def _chat(llm):
@@ -43,5 +50,8 @@ def _chat(llm):
 
 
 def plan_command(command: str, llm=None) -> Plan:
+    from datetime import datetime
+    now_str = datetime.now().strftime("%A, %B %d, %Y, %I:%M %p")
+    prompt = f"Current system time: {now_str}\n\n{PLANNER_PROMPT}\nCommand: {command}"
     structured = _chat(llm).with_structured_output(Plan)
-    return structured.invoke(PLANNER_PROMPT + command)
+    return structured.invoke(prompt)

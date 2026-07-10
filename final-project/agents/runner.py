@@ -37,6 +37,7 @@ async def _run_real(task_id: str, command: str, hub: TaskHub) -> None:
     await hub.publish(task_id, f"🗺️ Planned {len(plan.steps)} step(s): "
                                + " → ".join(f"{s.module}.{s.action}" for s in plan.steps))
     ctx = build_context(hub, task_id)
+    ctx["command"] = command
     await execute_plan(task_id, plan, hub, ctx=ctx)
 
 

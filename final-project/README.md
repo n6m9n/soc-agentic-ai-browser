@@ -40,7 +40,7 @@ uvicorn app.main:app --reload
 4. **Credentials → Create credentials → OAuth client ID → Web application** →
    Authorized redirect URI: `http://127.0.0.1:8000/auth/google/callback`.
 5. Download the client secret JSON as **`final-project/credentials.json`** (git-ignored).
-6. Start the server, open `http://127.0.0.1:8000/auth/google/login`, approve.
+6. Start the server, open ` /`, approve.
    Check `GET /auth/google/status`. App stays in "testing" mode — no verification needed for personal use.
 
 ## Architecture

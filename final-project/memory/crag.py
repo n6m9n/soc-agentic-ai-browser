@@ -73,6 +73,10 @@ class CorrectiveRAG:
         fact — it reasons over documents (e.g. the uploaded resume). Only asks the
         user when memory is entirely empty.
         """
+        cleaned = question.lower().strip().strip("?!.")
+        if cleaned in ("hello", "hi", "hey", "greetings", "good morning", "good afternoon", "good evening", "howdy", "sup"):
+            return CragResult(status="found", value="Hello! How can I help you today?", source="memory")
+
         docs = self.retrieve(question, k)
         if not docs:
             return CragResult(

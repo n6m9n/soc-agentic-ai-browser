@@ -38,3 +38,11 @@ def insert_event(service, event_body: dict, calendar_id: str = "primary",
     return service.events().insert(
         calendarId=calendar_id, body=event_body, sendUpdates=send_updates
     ).execute()
+
+
+def get_primary_timezone(service) -> str:
+    try:
+        res = service.settings().get(setting="timezone").execute()
+        return res.get("value", "UTC")
+    except Exception:
+        return "UTC"

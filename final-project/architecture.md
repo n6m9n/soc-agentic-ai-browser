@@ -1,4 +1,4 @@
-# Architecture — Agentic AI Browser Assistant
+ # Architecture — Agentic AI Browser Assistant
 
 ## System diagram
 ```mermaid
@@ -36,6 +36,9 @@ flowchart TB
     HUB -- WebSocket live + prompts --> UI
     UI -- POST /resume (approve/edit/send) --> RT
 ```
+
+### Visual Architecture Flow
+![System Architecture Diagram](system_architecture_diagram.png)
 
 ## Corrective-RAG loop (the brain, Module 6)
 ```

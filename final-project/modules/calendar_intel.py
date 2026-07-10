@@ -68,14 +68,24 @@ def detect_conflicts(events: list[tuple[datetime, datetime, str]]
 def build_event(title: str, start: datetime, end: datetime,
                 freq: Optional[str] = None, count: Optional[int] = None,
                 until: Optional[date] = None, attendees: Optional[list[str]] = None,
-                location: Optional[str] = None, reminders_minutes: Optional[int] = None
+                location: Optional[str] = None, reminders_minutes: Optional[int] = None,
+                timezone: Optional[str] = None
                 ) -> dict:
     """Build a Google Calendar event body, with optional RRULE recurrence."""
+    # Ensure start and end times are timezone-aware (required by Google API)
+    if start.tzinfo is None:
+        start = start.astimezone()
+    if end.tzinfo is None:
+        end = end.astimezone()
+
     body: dict = {
         "summary": title,
         "start": {"dateTime": start.isoformat()},
         "end": {"dateTime": end.isoformat()},
     }
+    if timezone:
+        body["start"]["timeZone"] = timezone
+        body["end"]["timeZone"] = timezone
     if location:
         body["location"] = location
     if attendees:

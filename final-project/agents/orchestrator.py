@@ -83,16 +83,59 @@ async def _h_calendar(step, task_id, hub, ctx) -> dict:
     if service is None:
         await hub.publish(task_id, "✖ calendar skipped: Google not connected")
         return {"status": "skipped"}
-    from integrations.calendar_client import insert_event
+    from integrations.calendar_client import insert_event, get_primary_timezone
     from modules.calendar_intel import build_event
+    from typing import Any
+    
     a = step.args
-    if not a.get("start"):
+    start_val = a.get("start")
+    
+    def is_valid_iso(s: Any) -> bool:
+        if not isinstance(s, str):
+            return False
+        try:
+            datetime.fromisoformat(s.replace("Z", "+00:00"))
+            return True
+        except ValueError:
+            return False
+
+    if not start_val or not is_valid_iso(start_val):
+        text_to_parse = a.get("when") or a.get("start") or ctx.get("command") or ""
+        if text_to_parse:
+            from pydantic import BaseModel, Field
+            from typing import Optional
+            from app.core.llm import get_chat
+
+            class CalendarEventArgs(BaseModel):
+                title: str = Field(description="The title of the event")
+                start: str = Field(description="ISO-8601 datetime format (YYYY-MM-DDTHH:MM:SS) of the event start time")
+                end: Optional[str] = Field(None, description="ISO-8601 datetime format of the event end time")
+                freq: Optional[str] = Field(None, description="DAILY or WEEKLY recurrence frequency if applicable")
+                count: Optional[int] = Field(None, description="Number of recurrences if applicable")
+
+            now_str = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+            parser_prompt = (
+                f"Current system time is: {now_str}\n"
+                f"Analyze this scheduling instruction: '{text_to_parse}'\n"
+                "Extract the event details: title, start, end, freq, count."
+            )
+            try:
+                structured = get_chat(temperature=0).with_structured_output(CalendarEventArgs)
+                parsed = structured.invoke(parser_prompt)
+                a = {**a, **parsed.model_dump(exclude_none=True)}
+            except Exception as e:
+                await hub.publish(task_id, f"⚠ Failed to parse date/time: {e}")
+
+    if not a.get("start") or not is_valid_iso(a["start"]):
         await hub.publish(task_id, "⚠ calendar step missing a date; skipped")
         return {"status": "skipped", "reason": "no date"}
-    start = datetime.fromisoformat(a["start"])
-    end = datetime.fromisoformat(a["end"]) if a.get("end") else start + timedelta(hours=1)
+
+    start = datetime.fromisoformat(a["start"].replace("Z", "+00:00"))
+    end = datetime.fromisoformat(a["end"].replace("Z", "+00:00")) if a.get("end") else start + timedelta(hours=1)
+    tz = get_primary_timezone(service)
     body = build_event(a.get("title", "Event"), start, end,
-                       freq=a.get("freq"), count=a.get("count"), attendees=a.get("attendees"))
+                       freq=a.get("freq"), count=a.get("count"), attendees=a.get("attendees"),
+                       timezone=tz)
     created = insert_event(service, body)
     await hub.publish(task_id, f"📅 calendar event created")
     return {"status": "created", "id": created.get("id")}
